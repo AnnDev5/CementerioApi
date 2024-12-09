@@ -1,11 +1,31 @@
-import { Injectable } from '@nestjs/common';
-import { CreateFamiliareDto } from './dto/create-familiare.dto';
-import { UpdateFamiliareDto } from './dto/update-familiare.dto';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
+import { CreateFamiliarDto } from './dto/create-familiar.dto';
+import { UpdateFamiliarDto } from './dto/update-familiar.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DifuntoEntity } from 'src/difunto/entities';
+import { Repository, DataSource } from 'typeorm';
 
 @Injectable()
 export class FamiliaresService {
-  create(createFamiliareDto: CreateFamiliareDto) {
-    return 'This action adds a new familiare';
+  private readonly logger = new Logger('FamiliaresService');
+  constructor(
+    @InjectRepository(DifuntoEntity)
+    private readonly difuntoRepository: Repository<DifuntoEntity>,
+    private readonly dataSource: DataSource,
+  ) {}
+
+  async create(createFamiliarDto: CreateFamiliarDto) {
+    try {
+      const familiar = this.difuntoRepository.create(createFamiliarDto);
+      await this.difuntoRepository.save(familiar);
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
   findAll() {
@@ -16,11 +36,19 @@ export class FamiliaresService {
     return `This action returns a #${id} familiare`;
   }
 
-  update(id: number, updateFamiliareDto: UpdateFamiliareDto) {
+  update(id: number, updateFamiliareDto: UpdateFamiliarDto) {
     return `This action updates a #${id} familiare`;
   }
 
   remove(id: number) {
     return `This action removes a #${id} familiare`;
+  }
+
+  private handleDBExceptions(error: any) {
+    if (error.code === '2305') throw new BadRequestException(error.detail);
+    this.logger.error(error);
+    throw new InternalServerErrorException(
+      'Unexpected error, check server logs',
+    );
   }
 }

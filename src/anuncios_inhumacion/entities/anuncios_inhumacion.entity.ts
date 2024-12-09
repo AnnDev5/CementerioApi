@@ -1,25 +1,38 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { DifuntoEntity } from 'src/difunto/entities/difunto.entity';
+import { FunerariaEntity } from 'src/funerarias/entities/funeraria.entity';
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'anuncionesinhumacion' })
 export class AnunciosInhumacionEntity {
-  @PrimaryColumn()
-  anuncio_id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column()
+  @Column('date')
   fecha_inhumacion: string;
 
-  @Column()
+  @Column('date')
   hora_inhumacion: string;
 
-  @Column()
+  @Column('text')
   cuartel: string;
 
-  @Column()
+  @Column('text')
   fila: string;
 
-  @Column()
+  @Column('text')
   columna: string;
 
-  @Column()
+  @Column('text')
   detalle: string;
+
+  @ManyToOne(
+    () => DifuntoEntity,
+    (difuntoEntity) => difuntoEntity.anuncionInhumacion,
+  )
+  difunto: DifuntoEntity;
+  @ManyToOne(
+    () => FunerariaEntity,
+    (funerariaEntity) => funerariaEntity.anuncionInhumacion,
+  )
+  funeraria: FunerariaEntity;
 }

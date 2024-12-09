@@ -1,14 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { FamiliaresService } from './familiares.service';
-import { CreateFamiliareDto } from './dto/create-familiare.dto';
-import { UpdateFamiliareDto } from './dto/update-familiare.dto';
+import { CreateFamiliarDto } from './dto/create-familiar.dto';
+import { UpdateFamiliarDto } from './dto/update-familiar.dto';
 
 @Controller('familiares')
 export class FamiliaresController {
   constructor(private readonly familiaresService: FamiliaresService) {}
 
   @Post()
-  create(@Body() createFamiliareDto: CreateFamiliareDto) {
+  create(@Body() createFamiliareDto: CreateFamiliarDto) {
     return this.familiaresService.create(createFamiliareDto);
   }
 
@@ -23,7 +31,10 @@ export class FamiliaresController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFamiliareDto: UpdateFamiliareDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateFamiliareDto: UpdateFamiliarDto,
+  ) {
     return this.familiaresService.update(+id, updateFamiliareDto);
   }
 

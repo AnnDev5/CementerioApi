@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { DifuntosService } from './difuntos.service';
 import { CreateDifuntoDto } from './dto/create-difunto.dto';
 import { UpdateDifuntoDto } from './dto/update-difunto.dto';
+import { PaginationDto } from 'src/common/pagination.dto';
 
 @Controller('difuntos')
 export class DifuntoController {
@@ -21,18 +24,21 @@ export class DifuntoController {
   }
 
   @Get()
-  findAll() {
-    return this.difuntosService.findAll();
+  findAll(@Query() paginationDto: PaginationDto) {
+    return this.difuntosService.findAll(paginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.difuntosService.findOne(+id);
+  @Get(':term')
+  findOne(@Param('term') term: string) {
+    return this.difuntosService.findOnePlain(term);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDifuntoDto: UpdateDifuntoDto) {
-    return this.difuntosService.update(+id, updateDifuntoDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateDifuntoDto: UpdateDifuntoDto,
+  ) {
+    return this.difuntosService.update(id, updateDifuntoDto);
   }
 
   @Delete(':id')

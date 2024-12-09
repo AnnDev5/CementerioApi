@@ -1,16 +1,26 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { AnunciosInhumacionEntity } from 'src/anuncios_inhumacion/entities/anuncios_inhumacion.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'funerarias' })
 export class FunerariaEntity {
-  @PrimaryColumn()
-  funeraria_id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @Column()
+  @Column('text')
   nombre_completa: string;
 
-  @Column()
+  @Column('text')
   telefono: string;
 
-  @Column()
+  @Column('text')
   email: string;
+
+  @OneToMany(
+    () => AnunciosInhumacionEntity,
+    (anunciosInhumacionEntity) => anunciosInhumacionEntity.funeraria,
+    {
+      cascade: true,
+    },
+  )
+  anuncionInhumacion: AnunciosInhumacionEntity;
 }
